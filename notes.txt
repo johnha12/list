@@ -1,0 +1,176 @@
+js with Node vs the Browser
+- before running js in browser 
+- now will use node 
+- need to install node
+
+js in browser
+- executed by script tags in html
+- we get access to DOM and related objects
+- code references variables in other files
+- include libraries by adding script tags
+
+js with node
+- executed by running node CLI from terminal
+- no access to DOM
+- each file is in its seperate world
+- include librariesby using npm (node package manager)
+
+Executing js
+- cmd node jsFileName.js
+- cmd node => enter in a workspace to use js
+- kill program with ctr+c
+
+scope
+- brower can reference other files
+- node, file is its own world
+- need module, code sharing between files
+- assign w/ module.exports="hi";    // make available to other files
+- const message = require('./myscript.js')    // call exported code
+  console.log(message)
+- "./" is same directory
+
+Execute code
+- code is wrapped in a function then executed
+exports: make available to other files => 'module.exports'
+require: function to get acess to export of other file
+module: object that define properties/info of current file
+__filename: full path + file name of this file. note 2 underscore
+__dirname: full path of this file
+- when code gets executed, there are invisible properties in the function wrapper
+  there is 'require', 'module', '__filename' and so on.
+- some handy use cases
+
+Require cache
+1. 
+2.
+- pass require, pass in filedir
+- wrap contents and execute, assign export to variable
+- while all this happens, function will update require cache
+  require cache have keys and values, names of files and whatever exported.
+  meaning second call of require will not run script again, will just pull from require cache
+- always export once
+- next see what happens when exporting file changes.
+
+Files require once
+- execute file one time
+- keeps cache
+- uses cache on next require. so cannot require twice
+- don't be surprised in the future when i dont get a new export each time
+
+Debugging with node
+- can use console.log()
+- or debugger
+- debugger CLI
+  terminal => node inspect file.js
+  prompt, step through
+  c: continue to end of program/debugger statement
+  n: run next line of code
+  s: step into a function
+  o: step out of current function
+  repl: represent implemenatation of object
+  ctr + c: exit program
+- start up debugger instance
+- node --inspect-brk file.js
+  open chrome browser => chrome://inspect
+  connect to it, inspect link.
+  can use console, step in, step out, resume controls
+  esc: bring up console tab
+  usually long script
+  great for learning
+- node -inspect file.js
+  start debugger and simitaneously start program
+  usually for short scripts
+
+  Project with node
+  - practice the library
+  - ls print out files in directory
+  - ls with no args, or ls and path
+  - make an ls program. where I can run for any directory in terminal
+  - read files. node.js can read out files outside directory
+  - node.org/api <= documentation
+    file system in documentation
+
+Acessing library modules
+- readdir: read directory function fs.readdir(path[,options], callback)
+- const fs = require('fs'); file system is abbreviated everywhere
+- will need to get experience on documentation
+- now can use function readdir
+
+process.cwd() function
+- current working directory
+- process module is added in the world scope. no need for require
+  one of few functions built in
+
+running node as executable 
+- right now need to type out every path to js file before executing it
+- ls is way better
+- figure out how to run nls
+- npm init -y: generate new file => package.json
+  scripts that does different purposes <= later on
+  installs any dependancies
+  help run program => "bin": {"nls": "index.js"}
+
+linking a project
+1. create package.json file w/ bin section
+2. change index.js file permissions
+3. add comment to index.js to allow be treated as executable
+4. link project
+permission terminal command => chmod +x index.js
+comment in js file => #!/usr/bin/env node
+make file available everywhere in computer => npm link
+- right now program is console.log() an array. next try to print out another way
+
+
+file or folder
+- better output/formatting
+- can print to different color
+- readdir => return array of strings
+- fs.lstat(path[, options], callback)
+  callback gives stats object
+- can console.log() the appropriate color
+
+buggy initial implemenatation
+- stats.isFile() => file or not
+- for loop lstat being ran very fast, callback doesn't run immediately
+- reaching out to harddrive takes some amount of time
+- best to collect all info, then console.log() at the end
+
+optional solution 1
+1. maintain array from each list. add stats to array, log everything when array is full
+  callback based approach.
+2. wrap lstat in promise. use async/await
+3. wrap lstat in promise. use async/await + promise.all helper method
+
+1. fill in lstat call in correct index.
+  if null is still in array, wait
+  if array is full, return
+  - weakness. solution can get complicated quickly for large code.
+
+ // SOLUTION 1
+  // const allStats = Array(filenames.length).fill(null);
+  // for (let filename of filenames) {
+  //   const index = filenames.indexOf(filename);
+  //   fs.lstat(filename, (err, stats) => {
+  //     if (err) {
+  //       console.log(err);
+  //     }
+  //     allStats[index] = stats;
+  //     const ready = allStats.every((stats) => {
+  //       return stats;
+  //     });
+  //     if (ready) {
+  //       allStats.forEach((stats, index) => {
+  //         console.log(filenames[index], stats.isFile());
+  //       });
+  //     }
+  //   });
+  // }
+
+solution 2
+- wrap lstat in a promise
+- wait for each callback, then make next call
+- console.log() at end
+- fs.promises api
+
+
+
