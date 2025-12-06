@@ -172,5 +172,39 @@ solution 2
 - console.log() at end
 - fs.promises api
 
+- await and async
+- need to wrap in try catch, for errors
+- cons: ran 1 lstat at a time. can take really long if there is a long lstat in serires
+  if 500ms per lstat, 100 lstat => 50 sec
+
+Solution 3
+- still use async/await
+- Promise.all() helper method
+- want a performance enhance
+
+- almost combination of solution 1 and 2
+- wait for every record before process
+- use Promise.all() => waits for all promises to be resolved
+  for many operations to be ran in parellel
+- parellel is better performance
+- next print by color, depending on file or folder
+
+color code the console.log()
+- npmjs <= open library
+- cmd: npm install chalk
+  package.json updated dependancies for chalk.
+  now have node_modules folder for dependancy.
+- need in code:  npm install chalk@4
+  new way: const chalk = require('chalk');
+
+nls any path
+- process.argv => has info on command line argurment.
+  at index 2.
+
+closing notes
+- create package.json, bin section to execute file
+- scripts, dependancies
+- pass argurments, callback function => (err, data)
+- can wrap in promeise, or promisify, or use module
 
 
